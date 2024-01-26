@@ -1,0 +1,31 @@
+version: "3"
+services:
+  react-app:
+    image: tradejounal-app
+    stdin_open: true
+    ports:
+      - "5173:5173"
+    networks:
+      - mern-app
+  api-server:
+    build: .
+    ports:
+      - "8082:8082"
+    networks:
+      - mern-app
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - mern-app
+    volumes:
+      - mongodata:/data/db
+networks:
+  mern-app:
+    driver: bridge
+volumes:
+  mongodata:
+    driver: local
