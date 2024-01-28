@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as yup from "yup";
+import axios from "axios";
 
 const register = () => {
   const userSchema = yup.object().shape({
@@ -34,6 +35,13 @@ const register = () => {
     password: false,
   });
 
+  const [errMsg, setErrMsg] = useState({
+    firstName: null,
+    lastName: null,
+    email: null,
+    password: null,
+  });
+
   const handleInput = (e) => {
     const { id, value } = e.target;
 
@@ -48,25 +56,34 @@ const register = () => {
       .validateAt(id, { [id]: value })
       .then(() => {
         setValid((prevValid) => ({ ...prevValid, [id]: true }));
+        setErrMsg((prevErrMsg) => ({ ...prevErrMsg, [id]: null }));
       })
       .catch((error) => {
         setValid((prevValid) => ({ ...prevValid, [id]: false }));
-        console.error(error.message);
+        setErrMsg((prevErrMsg) => ({ ...prevErrMsg, [id]: error.message }));
       });
   };
-  useEffect(() => {
-    console.log(user);
-    console.log(valid);
-  }, [handleInput]);
+
+  const handleSubmit = async () => {
+      try {
+        const res = await axios.post(
+          "http//localhost:8082/auth/register",user
+        );console.log(res.data);
+      } catch (error) {
+        console.error("Error making POST request:", error.message);
+      }
+  };
+  // useEffect(() => {
+  // }, [handleInput]);
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
       <div className="max-w-md bg-white rounded-md p-10 mx-auto w-full">
         <h1 className="text-center  text-black mt-4 text-3xl">Sign Up!!</h1>
-        <p class="mt-2 text-sm text-gray-600 text-center">
+        <p className="mt-2 text-sm text-gray-600 text-center">
           Please sign in to your account
         </p>
         <div className="mt-8">
-          <from>
+          <form onSubmit={handleSubmit}>
             <div>
               <label className="text-sm font-bold text-gray-700 tracking-wide">
                 FirstName:
@@ -80,6 +97,9 @@ const register = () => {
                 max={50}
                 className="w-full text-base py-2 border-b bg-white border-gray-300 focus:outline-none focus:border-indigo-500 text-black"
               ></input>
+              {errMsg.firstName ? (
+                <p className=" text-red-600">{errMsg.firstName}</p>
+              ) : null}
             </div>
             <div className="mt-4">
               <label className="text-sm font-bold text-gray-700 tracking-wide">
@@ -94,6 +114,9 @@ const register = () => {
                 max={50}
                 className="w-full text-base py-2 border-b bg-white border-gray-300 focus:outline-none focus:border-indigo-500 text-black"
               ></input>
+              {errMsg.lastName ? (
+                <p className=" text-red-600">{errMsg.lastName}</p>
+              ) : null}
             </div>
             <div className="mt-4">
               <label className="text-sm font-bold text-gray-700 tracking-wide">
@@ -106,6 +129,9 @@ const register = () => {
                 required
                 className="w-full text-base py-2 border-b bg-white border-gray-300 focus:outline-none focus:border-indigo-500 text-black"
               ></input>
+              {errMsg.email ? (
+                <p className=" text-red-600">{errMsg.email}</p>
+              ) : null}
             </div>
             <div className="mt-4">
               <label className="text-sm font-bold text-gray-700 tracking-wide">
@@ -118,6 +144,9 @@ const register = () => {
                 required
                 className="w-full text-base py-2 border-b bg-white border-gray-300 focus:outline-none focus:border-indigo-500 text-black"
               ></input>
+              {errMsg.password ? (
+                <p className=" text-red-600">{errMsg.password}</p>
+              ) : null}
             </div>
             <div className="mt-4">
               <button
@@ -137,7 +166,7 @@ const register = () => {
                 Sign in
               </a>
             </p>
-          </from>
+          </form>
         </div>
       </div>
     </div>
