@@ -64,14 +64,18 @@ const register = () => {
       });
   };
 
-  const handleSubmit = async () => {
-      try {
-        const res = await axios.post(
-          "http//localhost:8082/auth/register",user
-        );console.log(res.data);
-      } catch (error) {
-        console.error("Error making POST request:", error.message);
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      const res = await axios.post("/auth/register", user);
+      console.log(res.status);
+      if (res.status === "created") {
+        alert(res.message);
       }
+    } catch (error) {
+      console.error("Error making POST request:", error.message);
+      alert("ERROR:", err.error);
+    }
   };
   // useEffect(() => {
   // }, [handleInput]);
