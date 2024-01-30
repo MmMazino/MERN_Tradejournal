@@ -1,23 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const login = () => {
-  const handleLogin = ()=>{}
+  const navigate = useNavigate();
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+  const handleInput = (e) => {
+    const { id, value } = e.target;
+
+    // Update the user state
+    setUser((prevUser) => ({
+      ...prevUser,
+      [id]: value,
+    }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault;
+    try {
+      e.preventDefault();
+      const res = await axios.post("/auth/login", user);
+      if (res.status == 200) {
+        localStorage.setItem("authToken", res.data.token);
+        localStorage.setItem("user", res.data.user);
+        alert("login success");
+        // console.log(process.env.URL_PATH);
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Error making POST request:", error.message);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
       <div className="max-w-md bg-white rounded-md p-10 mx-auto w-full">
         <h1 className="text-center  text-black mt-4 text-3xl">WelcomeBack!!</h1>
-        <p class="mt-2 text-sm text-gray-600 text-center">
+        <p className="mt-2 text-sm text-gray-600 text-center">
           Please sign in to your account
         </p>
         <div className="mt-8">
-          <from>
+          <form onSubmit={handleSubmit}>
             <div>
-              <label className="text-sm font-bold text-gray-700 tracking-wide">
+              <label
+                className="text-sm font-bold text-gray-700 tracking-wide"
+              >
                 Email:
               </label>
               <input
                 type="text"
+                id="email"
                 required
+                onChange={handleInput}
                 className="w-full text-base py-2 border-b bg-white border-gray-300 focus:outline-none focus:border-indigo-500 text-black"
               ></input>
             </div>
@@ -27,6 +63,8 @@ const login = () => {
               </label>
               <input
                 type="password"
+                onClick={handleInput}
+                id="password"
                 required
                 className="w-full text-base py-2 border-b bg-white border-gray-300 focus:outline-none focus:border-indigo-500 text-black"
               ></input>
@@ -40,7 +78,7 @@ const login = () => {
                   className="h-4 w-4 bg-white focus:ring-indigo-400 border-gray-300 rounded"
                 ></input>
                 <label
-                  for="remember_me"
+                  htmlFor="remember_me"
                   className="ml-2 block text-sm text-gray-900"
                 >
                   Remember me
@@ -65,7 +103,7 @@ const login = () => {
                 Sign up
               </a>
             </p>
-          </from>
+          </form>
         </div>
       </div>
     </div>

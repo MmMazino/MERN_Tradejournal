@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as yup from "yup";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const register = () => {
+  const navigate = useNavigate();
   const userSchema = yup.object().shape({
     firstName: yup
       .string()
@@ -69,12 +71,13 @@ const register = () => {
       e.preventDefault();
       const res = await axios.post("/auth/register", user);
       console.log(res.status);
-      if (res.status === "created") {
-        alert(res.message);
+      if (res.status == 201) {
+        alert(res.data.message);
+        navigate("/login");
       }
     } catch (error) {
       console.error("Error making POST request:", error.message);
-      alert("ERROR:", err.error);
+      alert("ERROR:", error.message);
     }
   };
   // useEffect(() => {
